@@ -4,14 +4,15 @@ import {
   dehydrate,
 } from "@tanstack/react-query";
 import { getSingleNote } from "../../lib/api";
-import NoteDetailsClient from "./NoteDetails.client";
+import NoteDetailsClient from "./NoteDetails.client"; // путь зависит от структуры
 
 type Props = {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 };
 
-const NoteDetails = async ({ params }: Props) => {
-  const { id } = await params;
+export default async function NoteDetails({ params }: Props) {
+  const id = params.id; // оставить как строку
+
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
@@ -24,6 +25,4 @@ const NoteDetails = async ({ params }: Props) => {
       <NoteDetailsClient />
     </HydrationBoundary>
   );
-};
-
-export default NoteDetails;
+}
