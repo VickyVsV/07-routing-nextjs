@@ -1,7 +1,7 @@
 // app/notes/[id]/page.tsx
 
 import { QueryClient } from "@tanstack/react-query";
-import { getSingleNote } from "../../lib/api";
+import { getSingleNote } from "../../../lib/api";
 import NoteDetailsClient from "./NoteDetails.client";
 
 type Props = {

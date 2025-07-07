@@ -7,8 +7,8 @@ import SearchBox from "../../components/SearchBox/SearchBox";
 import Pagination from "../../components/Pagination/Pagination";
 import NoteList from "../../components/NoteList/NoteList";
 import NoteModal from "../../components/NoteModal/NoteModal";
-import { fetchNotes } from "../../app/lib/api";
-import type { GetNote } from "../../app/lib/api";
+import { fetchNotes } from "../../lib/api";
+import type { GetNote } from "../../lib/api";
 
 export default function NotesPage() {
   const [searchValue, setSearchValue] = useState("");
