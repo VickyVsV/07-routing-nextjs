@@ -13,7 +13,7 @@ export default function NoteList({ notes }: NoteListProps) {
   const queryClient = useQueryClient();
 
   const mutationDel = useMutation({
-    mutationFn: (id: number) => deleteNote(id),
+    mutationFn: (id: string) => deleteNote(id),
     onSuccess: () => {
       // 3. Коли мутація успішно виконується,
       // інвалідовуємо всі запити з ключем "notes"
@@ -21,6 +21,8 @@ export default function NoteList({ notes }: NoteListProps) {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
     },
   });
+
+  if (!notes || notes.length === 0) return null;
 
   return (
     <ul className={css.list}>

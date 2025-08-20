@@ -1,17 +1,22 @@
 'use client';
-import css from "./NotesPage.module.css";
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { useState } from "react";
-import { useDebounce } from "use-debounce";
-import SearchBox from "../../components/SearchBox/SearchBox";
-import Pagination from "../../components/Pagination/Pagination";
-import NoteList from "../../components/NoteList/NoteList";
-import NoteModal from "../../components/Modal/Modal";
-import { fetchNotes } from "../../lib/api";
-import type { GetNote } from "../../lib/api";
+import css from './NotesPage.module.css';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { useState } from 'react';
+import { useDebounce } from 'use-debounce';
+import SearchBox from '../../components/SearchBox/SearchBox';
+import Pagination from '../../components/Pagination/Pagination';
+import NoteList from '../../components/NoteList/NoteList';
+import NoteModal from '../../components/Modal/Modal';
+import NoteForm from '@/components/NoteForm/NoteForm';
+import { fetchNotes } from '../../lib/api';
+import type { GetNote } from '../../lib/api';
 
-export default function NotesPage() {
-  const [searchValue, setSearchValue] = useState("");
+interface NotesProps {
+  initialData: GetNote; // SSR данные приходят отсюда
+}
+
+export default function NotesPage({ initialData }: NotesProps) {
+  const [searchValue, setSearchValue] = useState('');
   /* const [currentPage, setcurrentPage] = useState(""); */
   const [searchValueDebonce] = useDebounce(searchValue, 1000);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,9 +29,10 @@ export default function NotesPage() {
   };
 
   const { data, isLoading } = useQuery<GetNote>({
-    queryKey: ["notes", searchValueDebonce, currentPage],
+    queryKey: ['notes', searchValueDebonce, currentPage],
     queryFn: () => fetchNotes(searchValueDebonce, currentPage, perPage),
     placeholderData: keepPreviousData,
+    initialData,
   });
 
   const openModal = () => setIsModalOpen(true);
@@ -50,11 +56,16 @@ export default function NotesPage() {
           <Pagination
             pageCount={totalPages}
             currentPage={currentPage - 1}
-            onPageChange={(selectedPage) => setCurrentPage(selectedPage + 1)}
+            onPageChange={selectedPage => setCurrentPage(selectedPage + 1)}
           />
         )}
         {!isLoading && data && <NoteList notes={data.notes} />}
-        {isModalOpen && <NoteModal onClose={closeModal} />}
+        {/* {isModalOpen && <NoteModal onClose={closeModal} />} */}
+        {isModalOpen && (
+          <NoteModal onClose={closeModal}>
+            <NoteForm onCancel={closeModal} onSuccess={closeModal} />
+          </NoteModal>
+        )}
       </div>
     </>
   );

@@ -80,7 +80,7 @@ export async function createNote(newNote: NewNote): Promise<Note> {
   return response.data;
 }
 
-export const deleteNote = async (id: number): Promise<Note> => {
+export const deleteNote = async (id: string): Promise<Note> => {
   const res = await axios.delete<Note>(
     `https://notehub-public.goit.study/api/notes/${id}`,
     {

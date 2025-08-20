@@ -1,11 +1,11 @@
-import css from "./NoteForm.module.css";
-import { useMutation } from "@tanstack/react-query";
-import { useQueryClient } from "@tanstack/react-query";
-import type { NewNote } from "../../types/note";
-import { createNote } from "../../lib/api";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import type { FormikHelpers } from "formik";
-import * as Yup from "yup";
+import css from './NoteForm.module.css';
+import { useMutation } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
+import type { NewNote } from '../../types/note';
+import { createNote } from '../../lib/api';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import type { FormikHelpers } from 'formik';
+import * as Yup from 'yup';
 
 interface NoteFormProps {
   onCancel: () => void;
@@ -13,19 +13,19 @@ interface NoteFormProps {
 }
 
 const initialValues: NewNote = {
-  title: "",
-  content: "",
-  tag: "Todo",
+  title: '',
+  content: '',
+  tag: 'Todo',
 };
 
 export default function NoteForm({ onCancel, onSuccess }: NoteFormProps) {
   const queryClient = useQueryClient();
 
-  const { mutate} = useMutation({
+  const { mutate, isPending} = useMutation({
     mutationFn: (noteData: NewNote) => createNote(noteData),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
       onSuccess();
-      queryClient.invalidateQueries({ queryKey: ["notes"] });
     },
   });
 
@@ -33,22 +33,20 @@ export default function NoteForm({ onCancel, onSuccess }: NoteFormProps) {
     mutate(values, {
       onSuccess: () => {
         actions.resetForm();
-        onSuccess();
       },
     });
   };
 
-const validationSchema = Yup.object({
-  title: Yup.string()
-    .required("Title is required")
-    .min(3, "Min 3 characters")
-    .max(50, "Max 50 characters"),
-  content: Yup.string()
-    .max(500, "Max 500 characters"),
-  tag: Yup.string()
-    .oneOf(["Todo", "Work", "Personal", "Meeting", "Shopping"], "Invalid tag")
-    .required("Tag is required"),
-});
+  const validationSchema = Yup.object({
+    title: Yup.string()
+      .required('Title is required')
+      .min(3, 'Min 3 characters')
+      .max(50, 'Max 50 characters'),
+    content: Yup.string().max(500, 'Max 500 characters'),
+    tag: Yup.string()
+      .oneOf(['Todo', 'Work', 'Personal', 'Meeting', 'Shopping'], 'Invalid tag')
+      .required('Tag is required'),
+  });
 
   return (
     <>
@@ -73,7 +71,11 @@ const validationSchema = Yup.object({
               rows={8}
               className={css.textarea}
             />
-            <ErrorMessage name="content" component="span" className={css.error} />
+            <ErrorMessage
+              name="content"
+              component="span"
+              className={css.error}
+            />
           </div>
 
           <div className={css.formGroup}>
@@ -96,7 +98,7 @@ const validationSchema = Yup.object({
             >
               Cancel
             </button>
-            <button type="submit" className={css.submitButton} disabled={false}>
+            <button type="submit" className={css.submitButton} disabled={isPending}>
               Create note
             </button>
           </div>
