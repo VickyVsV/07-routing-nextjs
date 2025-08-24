@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 /* import { useParams } from 'next/navigation'; */
 import { getSingleNote } from "../../../lib/api";
-import css from "../NotesPage.module.css";
+import css from "../filter/[...slug]/NotesPage.module.css";
 
 interface NoteDetailsClientProps {
   id: string;

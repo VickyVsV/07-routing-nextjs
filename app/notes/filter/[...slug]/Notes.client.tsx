@@ -3,19 +3,20 @@ import css from './NotesPage.module.css';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useDebounce } from 'use-debounce';
-import SearchBox from '../../components/SearchBox/SearchBox';
-import Pagination from '../../components/Pagination/Pagination';
-import NoteList from '../../components/NoteList/NoteList';
-import NoteModal from '../../components/Modal/Modal';
+import SearchBox from '@/components/SearchBox/SearchBox';
+import Pagination from '@/components/Pagination/Pagination';
+import NoteList from '@/components/NoteList/NoteList';
+import NoteModal from '@/components/Modal/Modal';
 import NoteForm from '@/components/NoteForm/NoteForm';
-import { fetchNotes } from '../../lib/api';
-import type { GetNote } from '../../lib/api';
+import { fetchNotes } from '@/lib/api';
+import type { GetNote } from '@/lib/api';
 
 interface NotesProps {
-  initialData: GetNote; // SSR данные приходят отсюда
+  initialData: GetNote;
+  tag: string | null; // SSR данные приходят отсюда
 }
 
-export default function NotesPage({ initialData }: NotesProps) {
+export default function NotesPage({ initialData, tag }: NotesProps) {
   const [searchValue, setSearchValue] = useState('');
   /* const [currentPage, setcurrentPage] = useState(""); */
   const [searchValueDebonce] = useDebounce(searchValue, 1000);
@@ -29,8 +30,8 @@ export default function NotesPage({ initialData }: NotesProps) {
   };
 
   const { data, isLoading } = useQuery<GetNote>({
-    queryKey: ['notes', searchValueDebonce, currentPage],
-    queryFn: () => fetchNotes(searchValueDebonce, currentPage, perPage),
+    queryKey: ['notes', searchValueDebonce, currentPage, tag],
+    queryFn: () => fetchNotes(searchValueDebonce, currentPage, perPage, tag || undefined),
     placeholderData: keepPreviousData,
     initialData,
   });
